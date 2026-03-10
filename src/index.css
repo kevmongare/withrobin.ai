@@ -1,0 +1,30 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@keyframes pulseDot {
+  0%, 80%, 100% { opacity: 0.25; transform: scale(0.75); }
+  40%           { opacity: 1;    transform: scale(1);    }
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+
+.fade-a { animation: fadeUp 0.55s ease both; }
+.fade-b { animation: fadeUp 0.55s 0.1s ease both; }
+.fade-c { animation: fadeUp 0.55s 0.2s ease both; }
+.fade-d { animation: fadeUp 0.55s 0.3s ease both; }
+.fade-e { animation: fadeUp 0.55s 0.4s ease both; }
+
+.field-focus:focus {
+  outline: none;
+  border-color: #e8622a !important;
+}
+
+* { box-sizing: border-box; }
+
+::placeholder { color: rgba(255, 255, 255, 0.25); }
+
+select option { background: #0d2b3e; }

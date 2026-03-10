@@ -1,0 +1,136 @@
+{
+  "name": "Robin – AI Landing Page Generator",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "ai-landing",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "c445e9e1-6d00-4e30-93ea-11e6c9d02eb6",
+      "name": "Landing Page Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [-240, -320],
+      "webhookId": "b7cf6e5d-61bc-45b9-896e-8f65561b5501"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "You are a conversion-focused website copywriter for a premium AI services company called Robin (withrobin.ai).\nTheir tagline is \"Our Solution Is All About Service\".\nWrite in a clear, outcome-focused, human-first tone. No hype. No jargon.\n\nUser Info:\nRole: {{$json.body.Role}}\nService: {{$json.body.Service}}\nDetails: {{$json.body['More Details']}}\n\nGenerate a full homepage structure.\n\nReturn ONLY valid JSON, no markdown, no backticks:\n{\n \"hero_title\":\"\",\n \"hero_subtitle\":\"\",\n \"hero_description\":\"\",\n \"services\":[\n  {\"name\":\"\",\"description\":\"\"},\n  {\"name\":\"\",\"description\":\"\"},\n  {\"name\":\"\",\"description\":\"\"}\n ],\n \"clients\":[\"\",\"\",\"\"],\n \"cta_title\":\"\",\n \"cta_button\":\"\"\n}",
+        "options": {}
+      },
+      "id": "420f8145-2d60-4b98-952e-7bbe3bb1d3b5",
+      "name": "AI Homepage Generator",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [0, -320]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "6270cd7f-27f8-453c-96ec-c447e8a37248",
+      "name": "Gemini Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [-80, -120],
+      "credentials": {
+        "googlePalmApi": {
+          "id": "YOUR_GEMINI_CREDENTIAL_ID",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "rendered_html",
+              "value": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\" />\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n  <title>{{$json.hero_title}}</title>\n  <script src=\"https://cdn.tailwindcss.com\"></script>\n  <link href=\"https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap\" rel=\"stylesheet\" />\n  <style>\n    body { font-family: 'DM Sans', sans-serif; background: #0d2b3e; color: white; margin: 0; }\n    .orange { color: #e8622a; }\n    .icon-circle { width:52px; height:52px; border-radius:50%; background:linear-gradient(135deg,#e8622a,#f07840); display:flex; align-items:center; justify-content:center; flex-shrink:0; }\n    .service-card:hover { background: rgba(255,255,255,0.04); }\n  </style>\n</head>\n<body>\n\n<!-- NAV -->\n<nav style=\"display:flex;align-items:center;justify-content:space-between;padding:16px 40px;border-bottom:1px solid rgba(255,255,255,0.08)\">\n  <div style=\"display:flex;align-items:center;gap:10px\">\n    <svg width=\"36\" height=\"36\" viewBox=\"0 0 36 36\" fill=\"none\">\n      <defs><linearGradient id=\"g1\" x1=\"0%\" y1=\"0%\" x2=\"100%\" y2=\"100%\"><stop offset=\"0%\" stop-color=\"#4ecdc4\"/><stop offset=\"100%\" stop-color=\"#2196f3\"/></linearGradient></defs>\n      <path d=\"M18 4 C10 4 5 9 5 14 C5 19 9 22 14 22 C18 22 21 20 22 17 C23 14 22 11 20 9 C18 7 15 6 13 7 C10 8 9 11 10 14 C11 17 14 19 17 19 C20 19 22 17 23 15 C24 12 23 9 21 7 C19 5 16 4 18 4Z\" stroke=\"url(#g1)\" stroke-width=\"2.2\" fill=\"none\" stroke-linecap=\"round\"/>\n    </svg>\n    <span style=\"font-weight:700;font-size:22px;background:linear-gradient(135deg,#4ecdc4,#45b7d1);-webkit-background-clip:text;-webkit-text-fill-color:transparent\">Robin</span>\n  </div>\n  <button style=\"background:#e8622a;color:white;border:none;border-radius:24px;padding:10px 22px;font-weight:600;font-size:14px;cursor:pointer\">Contact Us</button>\n</nav>\n\n<!-- HERO -->\n<section style=\"max-width:1100px;margin:0 auto;padding:60px 40px;display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:start\">\n  <div>\n    <h1 style=\"font-size:36px;font-weight:700;color:#e8622a;margin:0 0 16px;line-height:1.25\">{{$json.hero_title}}</h1>\n    <p style=\"font-size:15px;line-height:1.7;color:rgba(255,255,255,0.75);margin:0 0 8px\">{{$json.hero_subtitle}}</p>\n    <p style=\"font-size:15px;line-height:1.7;color:rgba(255,255,255,0.75);margin:0 0 40px\">{{$json.hero_description}}</p>\n\n    <div style=\"display:flex;flex-direction:column;gap:28px\">\n      <div class=\"service-card\" style=\"display:flex;gap:18px;align-items:flex-start;padding:12px;border-radius:8px;transition:background 0.2s\">\n        <div class=\"icon-circle\"><svg width=\"22\" height=\"22\" viewBox=\"0 0 24 24\" fill=\"white\"><path fill-rule=\"evenodd\" d=\"M12 8.5a3.5 3.5 0 100 7 3.5 3.5 0 000-7zm-6.5 3.5a6.5 6.5 0 1113 0 6.5 6.5 0 01-13 0zM10.5 2h3v3h-3zM10.5 19h3v3h-3zM2 10.5v3h3v-3zM19 10.5v3h3v-3z\"/></svg></div>\n        <div><h3 style=\"color:#e8622a;font-weight:600;font-size:17px;margin:0 0 6px\">{{$json.services[0].name}}</h3><p style=\"color:rgba(255,255,255,0.65);font-size:14px;line-height:1.6;margin:0\">{{$json.services[0].description}}</p></div>\n      </div>\n      <div class=\"service-card\" style=\"display:flex;gap:18px;align-items:flex-start;padding:12px;border-radius:8px;transition:background 0.2s\">\n        <div class=\"icon-circle\"><svg width=\"22\" height=\"22\" viewBox=\"0 0 24 24\" fill=\"white\"><path fill-rule=\"evenodd\" d=\"M4 5a1 1 0 011-1h14a1 1 0 011 1v14a1 1 0 01-1 1H5a1 1 0 01-1-1V5zm2 2v10h12V7H6zm2 2h2v2H8V9zm4 0h2v2h-2V9zm-4 4h2v2H8v-2zm4 0h2v2h-2v-2z\"/></svg></div>\n        <div><h3 style=\"color:#e8622a;font-weight:600;font-size:17px;margin:0 0 6px\">{{$json.services[1].name}}</h3><p style=\"color:rgba(255,255,255,0.65);font-size:14px;line-height:1.6;margin:0\">{{$json.services[1].description}}</p></div>\n      </div>\n      <div class=\"service-card\" style=\"display:flex;gap:18px;align-items:flex-start;padding:12px;border-radius:8px;transition:background 0.2s\">\n        <div class=\"icon-circle\"><svg width=\"22\" height=\"22\" viewBox=\"0 0 24 24\" fill=\"white\"><path fill-rule=\"evenodd\" d=\"M12 4a4 4 0 100 8 4 4 0 000-8zM6 8a6 6 0 1112 0A6 6 0 016 8zm-2 9a4 4 0 014-4h8a4 4 0 014 4v1H4v-1z\"/></svg></div>\n        <div><h3 style=\"color:#e8622a;font-weight:600;font-size:17px;margin:0 0 6px\">{{$json.services[2].name}}</h3><p style=\"color:rgba(255,255,255,0.65);font-size:14px;line-height:1.6;margin:0\">{{$json.services[2].description}}</p></div>\n      </div>\n    </div>\n\n    <div style=\"margin-top:36px;padding:18px 20px;background:rgba(255,255,255,0.04);border-radius:8px;border-left:3px solid #e8622a\">\n      <p style=\"color:white;font-size:14px;font-weight:600;margin:0 0 4px\">{{$json.cta_title}}</p>\n      <p style=\"color:rgba(255,255,255,0.55);font-size:13px;margin:0\">Reach out to set up a Value Discovery Session.</p>\n    </div>\n  </div>\n\n  <!-- RIGHT: abstract visual -->\n  <div>\n    <div style=\"background:linear-gradient(135deg,rgba(78,205,196,0.12),rgba(69,183,209,0.08));border-radius:12px;aspect-ratio:1;display:flex;align-items:center;justify-content:center;border:1px solid rgba(78,205,196,0.15)\">\n      <svg width=\"300\" height=\"300\" viewBox=\"0 0 320 320\" fill=\"none\" style=\"opacity:0.75\">\n        <defs>\n          <linearGradient id=\"kg1\" x1=\"0%\" y1=\"0%\" x2=\"100%\" y2=\"100%\"><stop offset=\"0%\" stop-color=\"#b0c8d4\"/><stop offset=\"100%\" stop-color=\"#dce8ec\"/></linearGradient>\n          <linearGradient id=\"kg2\" x1=\"100%\" y1=\"0%\" x2=\"0%\" y2=\"100%\"><stop offset=\"0%\" stop-color=\"#94b8c4\"/><stop offset=\"100%\" stop-color=\"#c8dce4\"/></linearGradient>\n        </defs>\n        <ellipse cx=\"160\" cy=\"160\" rx=\"110\" ry=\"60\" stroke=\"url(#kg1)\" stroke-width=\"18\" fill=\"none\" stroke-linecap=\"round\" transform=\"rotate(-20 160 160)\" opacity=\"0.9\"/>\n        <ellipse cx=\"160\" cy=\"160\" rx=\"80\" ry=\"110\" stroke=\"url(#kg2)\" stroke-width=\"18\" fill=\"none\" stroke-linecap=\"round\" transform=\"rotate(10 160 160)\" opacity=\"0.75\"/>\n        <ellipse cx=\"160\" cy=\"160\" rx=\"100\" ry=\"40\" stroke=\"url(#kg1)\" stroke-width=\"14\" fill=\"none\" stroke-linecap=\"round\" transform=\"rotate(60 160 160)\" opacity=\"0.6\"/>\n        <circle cx=\"220\" cy=\"100\" r=\"4\" fill=\"rgba(255,255,255,0.6)\"/>\n        <line x1=\"220\" y1=\"104\" x2=\"220\" y2=\"116\" stroke=\"rgba(255,255,255,0.4)\" stroke-width=\"1.5\"/>\n        <circle cx=\"130\" cy=\"230\" r=\"3.5\" fill=\"rgba(255,255,255,0.5)\"/>\n        <circle cx=\"260\" cy=\"140\" r=\"2\" fill=\"rgba(255,200,100,0.5)\"/>\n        <circle cx=\"80\" cy=\"190\" r=\"1.5\" fill=\"rgba(255,200,100,0.5)\"/>\n        <circle cx=\"180\" cy=\"260\" r=\"2\" fill=\"rgba(255,200,100,0.5)\"/>\n      </svg>\n    </div>\n    <p style=\"text-align:center;color:rgba(255,255,255,0.35);font-size:13px;font-style:italic;margin-top:12px\">Every superhero needs a sidekick</p>\n\n    <div style=\"margin-top:24px\">\n      <p style=\"color:rgba(255,255,255,0.3);font-size:12px;text-transform:uppercase;letter-spacing:0.15em;margin-bottom:10px\">Trusted by</p>\n      <div style=\"display:flex;flex-wrap:wrap;gap:10px\">\n        <span style=\"background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:5px 14px;font-size:13px;color:rgba(255,255,255,0.55)\">{{$json.clients[0]}}</span>\n        <span style=\"background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:5px 14px;font-size:13px;color:rgba(255,255,255,0.55)\">{{$json.clients[1]}}</span>\n        <span style=\"background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:5px 14px;font-size:13px;color:rgba(255,255,255,0.55)\">{{$json.clients[2]}}</span>\n      </div>\n    </div>\n  </div>\n</section>\n\n<!-- MAILING LIST -->\n<section style=\"border-top:1px solid rgba(255,255,255,0.08);padding:48px 40px\">\n  <div style=\"max-width:1100px;margin:0 auto\">\n    <p style=\"font-weight:700;font-size:16px;color:white;margin-bottom:24px\">Join our mailing list for insights, tips, and updates on the work Robin is doing to transform the way we work with AI.</p>\n    <div style=\"display:flex;gap:0;max-width:500px\">\n      <input placeholder=\"Enter your Email Address\" style=\"flex:1;background:white;border:none;border-radius:6px 0 0 6px;padding:12px 16px;font-size:14px;color:#1a1a1a;outline:none\" />\n      <button style=\"background:#e8622a;color:white;border:none;border-radius:0 6px 6px 0;padding:12px 24px;font-weight:600;font-size:14px;cursor:pointer\">{{$json.cta_button}}</button>\n    </div>\n  </div>\n</section>\n\n<!-- FOOTER -->\n<footer style=\"border-top:1px solid rgba(255,255,255,0.08);padding:20px 40px;text-align:center\">\n  <p style=\"color:rgba(255,255,255,0.3);font-size:13px;margin:0\">Copyright &copy; 2026 Robin | Powered by Robin</p>\n</footer>\n\n</body>\n</html>"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "ac337540-716f-4e86-9b60-ecfd27744f87",
+      "name": "Render HTML",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 2,
+      "position": [240, -320]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1wbsO-4U9fJOxXQU2GRHAbXlFLRZ5YODXB7JptLKVFuI",
+          "mode": "list",
+          "cachedResultName": "AI Website",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wbsO-4U9fJOxXQU2GRHAbXlFLRZ5YODXB7JptLKVFuI/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wbsO-4U9fJOxXQU2GRHAbXlFLRZ5YODXB7JptLKVFuI/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "02a465b5-da4e-4c27-9ce3-779ded7834c4",
+      "name": "Save to Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [480, -320],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "RrQYA7Yyq4lnjXfJ",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "9771d445-7d4d-4976-ad4a-439712c88960",
+      "name": "Return HTML",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [720, -320]
+    }
+  ],
+  "connections": {
+    "Landing Page Webhook": {
+      "main": [[{ "node": "AI Homepage Generator", "type": "main", "index": 0 }]]
+    },
+    "AI Homepage Generator": {
+      "main": [[{ "node": "Render HTML", "type": "main", "index": 0 }]]
+    },
+    "Render HTML": {
+      "main": [[{ "node": "Save to Sheets", "type": "main", "index": 0 }]]
+    },
+    "Save to Sheets": {
+      "main": [[{ "node": "Return HTML", "type": "main", "index": 0 }]]
+    },
+    "Gemini Chat Model": {
+      "ai_languageModel": [[{ "node": "AI Homepage Generator", "type": "ai_languageModel", "index": 0 }]]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "05d0f1cc0afeed4a3ab6be2e4486f7bf6627bc598ccaa2f7a89a4335f2731778"
+  }
+}
