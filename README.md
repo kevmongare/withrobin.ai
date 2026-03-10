@@ -72,5 +72,5 @@ The n8n workflow is for server-side use / webhook integrations.
 
 ## Environment
 
-The React app calls `https://api.anthropic.com/v1/messages` directly from the browser.
+The React app calls `https://robinwithrobin.app.n8n.cloud/webhook/ai-landing` directly from the browser.
 For production, proxy through your own backend to keep the API key server-side.
