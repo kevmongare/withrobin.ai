@@ -285,7 +285,7 @@ Return ONLY valid JSON, no markdown, no backticks:
 }`;
 
     try {
-      const res = await fetch("https://api.anthropic.com/v1/messages", {
+      const res = await fetch("https://robinwithrobin.app.n8n.cloud/webhook-test/ai-landing", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
