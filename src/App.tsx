@@ -285,17 +285,14 @@ Return ONLY valid JSON, no markdown, no backticks:
 }`;
 
     try {
-      const res = await fetch("https://robinwithrobin.app.n8n.cloud/webhook-test/ai-landing", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          model: "claude-sonnet-4-20250514",
-          max_tokens: 1000,
-          messages: [{ role: "user", content: prompt }],
-        }),
-      });
-      const data = await res.json();
-      const text: string = data.content?.map((b: { text?: string }) => b.text ?? "").join("") ?? "";
+      const res = await fetch("https://robinwithrobin.app.n8n.cloud/webhook/ai-landing", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ prompt }),
+});
+const data = await res.json();
+const text: string = data.content?.map((b: { text?: string }) => b.text ?? "").join("") ?? "";
+```
       const clean = text.replace(/```json|```/g, "").trim();
       const parsed: PageData = JSON.parse(clean);
       setPageData(parsed);
@@ -348,7 +345,7 @@ Return ONLY valid JSON, no markdown, no backticks:
                 Our Solution Is All About Service
               </h1>
               <p style={{ fontSize: 15, color: "rgba(255,255,255,0.65)", lineHeight: 1.7, margin: 0 }}>
-                AI is redefining business workflows. Describe your role and goals — Robin generates your personalised homepage in seconds.
+                AI is redefining business workflows. Describe your role and goals — Robin helps you turn AI into outcomes, with a personalized, human-first service model.
               </p>
             </div>
 
