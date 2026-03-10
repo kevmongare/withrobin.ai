@@ -143,8 +143,22 @@ export default function App() {
 
       if (!res.ok) throw new Error(`n8n responded with ${res.status}`);
 
-      // n8n's "Return HTML" node sends back the rendered HTML string
-      const html = await res.text();
+      // n8n may return raw HTML or a JSON wrapper like { rendered_html: "..." }
+      // Handle both cases gracefully
+      const raw = await res.text();
+      let html = raw;
+
+      // If n8n returned JSON, extract rendered_html field
+      if (raw.trimStart().startsWith("{") || raw.trimStart().startsWith("[")) {
+        try {
+          const parsed = JSON.parse(raw);
+          const obj = Array.isArray(parsed) ? parsed[0] : parsed;
+          html = obj.rendered_html ?? obj.output ?? raw;
+        } catch {
+          html = raw; // not valid JSON, use as-is
+        }
+      }
+
       setRenderedHtml(html);
     } catch (err) {
       setError("Could not reach the n8n workflow. Make sure it's active and the webhook URL is correct.");
@@ -306,7 +320,7 @@ export default function App() {
               </div>
 
               <p style={{ textAlign: "center", fontSize: 12, color: "rgba(255,255,255,0.2)", margin: 0 }}>
-                Powered by Robin · n8n 
+                Powered by withRobin.AI · n8n + Gemini
               </p>
             </div>
           </>
