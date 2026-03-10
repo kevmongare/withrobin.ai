@@ -49,12 +49,18 @@ function PulseLoader() {
   );
 }
 
-// ── Rendered HTML Page (inside srcdoc iframe so styles are isolated) ───────────
+// ── Rendered HTML Page ────────────────────────────────────────────────────────
+// Strips the <nav> from the n8n HTML so it doesn't duplicate the React toolbar
+function stripNav(html: string): string {
+  return html.replace(/<nav[\s\S]*?<\/nav>/i, "");
+}
+
 function RenderedPage({ html, onReset }: { html: string; onReset: () => void }) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [iframeHeight, setIframeHeight] = useState<number>(800);
+  const cleanHtml = stripNav(html);
 
-  // Resize iframe to match content height
+  // Auto-resize iframe to full content height
   useEffect(() => {
     const iframe = iframeRef.current;
     if (!iframe) return;
@@ -62,46 +68,45 @@ function RenderedPage({ html, onReset }: { html: string; onReset: () => void }) 
       try {
         const h = iframe.contentDocument?.body?.scrollHeight;
         if (h) setIframeHeight(h + 32);
-      } catch { /* cross-origin guard */ }
+      } catch { /* srcdoc is same-origin, but guard anyway */ }
     };
     iframe.addEventListener("load", onLoad);
     return () => iframe.removeEventListener("load", onLoad);
-  }, [html]);
+  }, [cleanHtml]);
 
   return (
     <div style={{ minHeight: "100vh", background: "#0d2b3e", fontFamily: "'DM Sans', sans-serif" }}>
-      {/* Toolbar */}
-      <div style={{
+
+      {/* ── Single navbar / toolbar ── */}
+      <nav style={{
         display: "flex", alignItems: "center", justifyContent: "space-between",
-        padding: "14px 32px", borderBottom: "1px solid rgba(255,255,255,0.08)",
-        background: "#0a2233", position: "sticky", top: 0, zIndex: 10
+        padding: "14px 24px", borderBottom: "1px solid rgba(255,255,255,0.08)",
+        background: "#0a2233", position: "sticky", top: 0, zIndex: 10,
+        flexWrap: "wrap", gap: 10
       }}>
         <RobinLogo />
-        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <span style={{ fontSize: 12, color: "rgba(255,255,255,0.3)", letterSpacing: "0.05em" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+          <span style={{ fontSize: 11, color: "rgba(255,255,255,0.3)", letterSpacing: "0.05em", whiteSpace: "nowrap" }}>
             ✓ Generated &amp; saved to Sheets
           </span>
           <button
             onClick={onReset}
             style={{
               background: "#e8622a", color: "white", border: "none", borderRadius: 24,
-              padding: "9px 20px", fontFamily: "'DM Sans', sans-serif",
-              fontWeight: 600, fontSize: 13, cursor: "pointer"
+              padding: "8px 18px", fontFamily: "'DM Sans', sans-serif",
+              fontWeight: 600, fontSize: 13, cursor: "pointer", whiteSpace: "nowrap"
             }}
           >
             ← New Page
           </button>
         </div>
-      </div>
+      </nav>
 
-      {/* n8n-rendered HTML injected as srcdoc */}
+      {/* ── n8n HTML (nav stripped) rendered in full-height iframe ── */}
       <iframe
         ref={iframeRef}
-        srcDoc={html}
-        style={{
-          width: "100%", height: iframeHeight, border: "none",
-          display: "block"
-        }}
+        srcDoc={cleanHtml}
+        style={{ width: "100%", height: iframeHeight, border: "none", display: "block" }}
         title="Generated Landing Page"
       />
     </div>
@@ -320,7 +325,7 @@ export default function App() {
               </div>
 
               <p style={{ textAlign: "center", fontSize: 12, color: "rgba(255,255,255,0.2)", margin: 0 }}>
-                Powered by withRobin.AI · n8n + Gemini
+                Powered by Robin · n8n + Gemini
               </p>
             </div>
           </>
@@ -330,7 +335,7 @@ export default function App() {
       {/* Footer */}
       <footer style={{ borderTop: "1px solid rgba(255,255,255,0.08)", padding: "20px 40px", textAlign: "center" }}>
         <p style={{ color: "rgba(255,255,255,0.25)", fontSize: 13, margin: 0 }}>
-          Copyright © 2026 Robin | Powered by Robin
+          Copyright © 2026 withRobin | 
         </p>
       </footer>
     </div>
